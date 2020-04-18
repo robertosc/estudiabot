@@ -3,12 +3,18 @@ token = '822081181:AAHqSiiWPGeoKCcAaMPeMhWwMkCwkeH8vWI'
 bot = TelegramBot.new(token: token)
 
 
+def saludos(num)
+    return num
+end
+
+
+contador = 0
+
 bot.get_updates(fail_silently: true) do |message|
     puts "@#{message.from.username}: #{message.text}"
     command = message.get_command_for(bot)
-
+    
     message.reply do |reply|
-        contador = 0
         
         case command
         when /start/i
@@ -21,6 +27,9 @@ bot.get_updates(fail_silently: true) do |message|
         when /menu/i
             reply.text = ("Entiendo los siguientes comandos:\n/info te brinda más información sobre el estudiadero
 /ayuda te ofrece opciones de ayuda en tus materias \n/contacto te pone en contacto con soporte técnico")
+        when /contador/i
+            reply.text = saludos(contador)
+            contador += 1
         else
             reply.text = "No sé que significa #{command.inspect}. Escribe /menu para ver opciones válidas."
         end
