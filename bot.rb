@@ -30,6 +30,10 @@ bot.get_updates(fail_silently: true) do |message|
         when /contador/i
             reply.text = saludos(contador)
             contador += 1
+        when /calculo/i
+            reply.text = "¿Con qué cálculo necesitas ayuda?\n/calc1\n/calc2\n/calc3"
+        when /calc1/i
+            reply.text = "Puedes contactar a:\nRoberto Sánchez (11am-3pm) al 8406-9486"
         else
             reply.text = "No sé que significa #{command.inspect}. Escribe /menu para ver opciones válidas."
         end
