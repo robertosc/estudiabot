@@ -26,10 +26,12 @@ asignacion_calculo3 = {}
 contador_mate = 0
 
 #Contactos
-case = telegram.Contact(+50625110000, "Case")
+case1 = telegram.Contact(+50625110000, "CASE Ingeniería")
 roberto = telegram.Contact(+50684069486, "Roberto")
 josue = telegram.Contact(+50689703121, "Josue")
 ricardo = telegram.Contact(+50687726153, "Ricardo")
+
+
 
 lista_calculo1 = [roberto, josue, ricardo] 
 lista_calculo2 = []
@@ -59,26 +61,30 @@ def menu(update, context):
         \n/horario te muestra el horario de atención\n/case te pasa el contacto del CASE de Ingeniería (nolista)") 
 
 def contacto(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text="Si tienes alguna duda sobre el Bot, puedes contactar\
+    context.bot.send_message(chat_id=update.effective_chat.id, text="Si tienes alguna duda sobre el Bot, puedes contactar \
 al desarrollador.")
     context.bot.send_contact(chat_id=update.effective_chat.id, contact = roberto)
 
 def case(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="Este es el contacto del CASE de Ingeniería")
-    context.bot.send_contact(chat_id=update.effective_chat.id, contact = case)
+    context.bot.send_contact(chat_id=update.effective_chat.id, contact = case1)
 
 
 def contador(update, context):
     context.bot.send_message(chat_id = update.effective_chat.id, text= f"{usuarios}")
     context.bot.send_message(chat_id = update.effective_chat.id, text= f"{asignacion_calculo1}")
 
-
+def hora(opcion): #Opcion 1 devuelve hora como int, 2 devuelve hora completa con str
+    now = datetime.now()
+    if opcion==1:
+        return int(now.strftime("%H"))
+    else:
+        return now.strftime("%H:%M")
 
 def horario(update, context):
-    now = datetime.now()
-    current_time = now.strftime("%H:%M")
-    context.bot.send_message(chat_id=update.effective_chat.id, text=f"El estudiadero está disponible\
-        de 9:00am a 6:00pm. \nSon las {current_time}")
+    current_time = hora(2)
+    context.bot.send_message(chat_id=update.effective_chat.id, text=f"El estudiadero está disponible de 9:00 a 18:00. \
+    \nSon las {current_time}")
 
 def ayuda(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="¿Con qué curso necesitas ayuda?\n\
@@ -92,13 +98,10 @@ def calculo1(update, context):
         contador_mate = 0
 
     user = update.message.from_user
-    now = datetime.now()
-    hora = int(now.strftime("%H"))
-
+    hora1 = hora(1)
     contador_mate = turnos(str(user['first_name']), str(user['last_name']), contador_mate, asignacion_calculo1)
 
-
-    if hora > 0 and hora < 24:
+    if hora1 > 0 and hora1 < 24:
         context.bot.send_contact(chat_id=update.effective_chat.id, contact=lista_calculo1[asignacion_calculo1[str(user['first_name']) + str(user['last_name'])]])
         #telegram.Message(contact=roberto)
     else:
@@ -111,6 +114,44 @@ def turnos(firstname, lastname, contador, dict_asignacion):
         return contador
 
 
+#ARREGLAR CALCULO2
+
+def calculo2(update, context):
+    global contador_mate
+
+    if contador_mate > len(lista_calculo1)-1:
+        contador_mate = 0
+
+    user = update.message.from_user
+    hora1 = hora(1)
+    contador_mate = turnos(str(user['first_name']), str(user['last_name']), contador_mate, asignacion_calculo1)
+
+    if hora1 > 0 and hora1 < 24:
+        context.bot.send_contact(chat_id=update.effective_chat.id, contact=lista_calculo2[asignacion_calculo1[str(user['first_name']) + str(user['last_name'])]])
+        #telegram.Message(contact=roberto)
+    else:
+        context.bot.send_message(chat_id=update.effective_chat.id, text = "No hay")
+
+
+def selector(lista_curso, firstname, lastname):
+    hora = hora(1)
+
+    if hora >= 9 and hora < 11:
+        return lista_curso[asignacion_calculo1[firstname+lastname]]
+    
+    elif hora >= 11 and hora < 1:
+        return 
+
+    elif hora >= 1 and hora < 3:
+        return
+    elif hora >= 3:
+        return
+
+
+
+
+
+
 
 start_handler = CommandHandler('start', start)
 time_handler = CommandHandler('horario', horario)
@@ -119,6 +160,12 @@ menu_handler = CommandHandler('menu', menu)
 contador_handler = CommandHandler('contador', contador)
 ayuda_handler = CommandHandler('ayuda', ayuda)
 calc1_handler = CommandHandler('calculo1', calculo1)
+calc2_handler = CommandHandler('calculo2', calculo2)
+#calc3_handler = CommandHandler('calculo3', calculo3)
+
+
+
+
 contacto_handler = CommandHandler('contacto', contacto)
 case_handler = CommandHandler('case', case)
 
@@ -130,6 +177,8 @@ dispatcher.add_handler(menu_handler)
 dispatcher.add_handler(contador_handler)
 dispatcher.add_handler(ayuda_handler)
 dispatcher.add_handler(calc1_handler)
+dispatcher.add_handler(calc2_handler)
+#dispatcher.add_handler(calc3_handler)
 dispatcher.add_handler(contacto_handler)
 dispatcher.add_handler(case_handler)
 
