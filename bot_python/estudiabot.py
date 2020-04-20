@@ -95,10 +95,8 @@ def calculo1(update, context):
     now = datetime.now()
     hora = int(now.strftime("%H"))
 
-    if str(user['first_name']) + str(user['last_name']) not in asignacion_calculo1:
-        asignacion_calculo1[str(user['first_name']) + str(user['last_name'])] = contador_mate
-        contador_mate +=1
-    
+    contador_mate = turnos(str(user['first_name']), str(user['last_name']), contador_mate, asignacion_calculo1)
+
 
     if hora > 0 and hora < 24:
         context.bot.send_contact(chat_id=update.effective_chat.id, contact=lista_calculo1[asignacion_calculo1[str(user['first_name']) + str(user['last_name'])]])
@@ -106,6 +104,11 @@ def calculo1(update, context):
     else:
         context.bot.send_message(chat_id=update.effective_chat.id, text = "No hay")
 
+def turnos(firstname, lastname, contador, dict_asignacion):
+    if firstname+lastname not in dict_asignacion:
+        dict_asignacion[firstname+lastname] = contador
+        contador+=1
+        return contador
 
 
 
