@@ -17,6 +17,12 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 #globales
 usuarios = {}
+
+asignacion_calculo1 = {}
+asignacion_calculo2 = {}
+asignacion_calculo3 = {}
+
+
 contador_mate = 0
 
 #Contactos
@@ -64,6 +70,8 @@ def case(update, context):
 
 def contador(update, context):
     context.bot.send_message(chat_id = update.effective_chat.id, text= f"{usuarios}")
+    context.bot.send_message(chat_id = update.effective_chat.id, text= f"{asignacion_calculo1}")
+
 
 
 def horario(update, context):
@@ -79,17 +87,21 @@ def ayuda(update, context):
 
 def calculo1(update, context):
     global contador_mate
-    context.bot.send_message(chat_id=update.effective_chat.id, text= f"{contador_mate}")
 
     if contador_mate > len(lista_calculo1)-1:
         contador_mate = 0
 
+    user = update.message.from_user
     now = datetime.now()
     hora = int(now.strftime("%H"))
 
-    if hora > 11 and hora < 20:
-        context.bot.send_contact(chat_id=update.effective_chat.id, contact=lista_calculo1[contador_mate])
+    if str(user['first_name']) + str(user['last_name']) not in asignacion_calculo1:
+        asignacion_calculo1[str(user['first_name']) + str(user['last_name'])] = contador_mate
         contador_mate +=1
+    
+
+    if hora > 0 and hora < 24:
+        context.bot.send_contact(chat_id=update.effective_chat.id, contact=lista_calculo1[asignacion_calculo1[str(user['first_name']) + str(user['last_name'])]])
         #telegram.Message(contact=roberto)
     else:
         context.bot.send_message(chat_id=update.effective_chat.id, text = "No hay")
