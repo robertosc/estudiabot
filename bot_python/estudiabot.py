@@ -21,29 +21,101 @@ usuarios = {}
 asignacion_calculo1 = {}
 asignacion_calculo2 = {}
 asignacion_calculo3 = {}
+asignacion_fisica = {}
 
 
 contador_mate = 0
+contador_fisica = 0 
+contador_quimica = 0
 
 #Contactos
 case1 = telegram.Contact(+50625110000, "CASE Ingeniería")
+
 roberto = telegram.Contact(+50684069486, "Roberto")
+cursos_robert = {"Roberto": [[11,12,13,14],'precalc', 'calc1', 'calc3', 'fisica1', 'fisica3', 'ecua']}
+
 josue = telegram.Contact(+50689703121, "Josue")
+cursos_josue = {"Josue": [[],'precacl', 'calc1','calc2','calc3', 'fisica1', 'fisica2', 'fisica3', 'ecua', 'algebra']}##
+
 ricardo = telegram.Contact(+50687726153, "Ricardo")
+cursos_ricardo = {"Ricardo": [[],'precacl', 'calc1','calc2','calc3', 'fisica1', 'fisica2', 'fisica3', 'ecua', 'algebra']}##
+
+laura = telegram.Contact(+50689559126, "Laura")
+cursos_lau = {"Laura": [[11,12,13,14],'precacl', 'calc1','fisica1', 'fisica2', 'ecua']}
+
+mateo = telegram.Contact(+50663940369, "Mateo")
+cursos_mateo = {"Mateo": [[10,11,12,13,14], 'precacl', 'calc1', 'fisica1', 'fisica3', 'fisica2']}
+
+joseluis = telegram.Contact(+50671036681, "Jose Luis")
+cursos_josel = {"JoseL": [[],'precacl', 'calc1', 'calc3', 'fisica1', 'fisica3', 'ecua']}##
+
+domenico = telegram.Contact(+50670030300, "Domenico")
+cursos_dome = {"Domenico": [[9,10,11],'precacl', 'calc1', 'quimica']}
+
+mariela = telegram.Contact(+50672004056, "Mariela")
+cursos_mariela = {"Mariela": [[13,14,15,16],'precacl', 'calc1', 'calc3', 'fisica1', 'fisica3', 'ecua']}
+
+rafael = telegram.Contact(+50684449292, "Rafael")
+cursos_rafa = {"Rafa": [[9,10,11,12],'precacl', 'calc1', 'calc3', 'fisica1', 'fisica3', 'ecua']}
+
+jean = telegram.Contact(+50687102598, "Jean")
+cursos_jean = {"Jean": [[]9,10,11,12,13,14], 'precacl', 'calc1', 'calc3', 'fisica1', 'fisica3', 'ecua']}
+
+maulin = telegram.Contact(+50688108840, "Maulin")
+cursos_maulin = {"Maulin": [[12,13,14,15]'precacl', 'calc1', 'calc3', 'fisica1', 'fisica3', 'ecua']}
+
+david = telegram.Contact(+506, "David")
+cursos_david = {"David": [[13,14,15,16,17],'precacl', 'calc1','calc2','calc3', 'fisica1', 'fisica2', 'fisica3', 'ecua', 'algebra']}
+
+
+#nombres = ["Roberto", "Josue", "Ricardo", "David", "Maulin", "Jean", "Laura", "Domenico", "JoseL", "Mateo", "Rafa"]
+
+lista_cursos_persona = [cursos_david, cursos_dome, cursos_jean, cursos_josel, cursos_josue, cursos_lau, cursos_mariela, cursos_mateo,
+    cursos_maulin, cursos_rafa, cursos_ricardo, cursos_robert]
+
+
+def horario(curso): #Se le pasa un str con el curso
 
 
 
-lista_calculo1 = [roberto, josue, ricardo] 
-lista_calculo2 = []
-lista_calculo3 = []
-lista_fisica1 = []
+def selector(curso, firstname, lastname):
+    
+    hora = hora(1)
+
+    lista_precal,lista_calculo, lista_calculo2, lista_calculo3, lista_fisica, lista_fisica2 , lista_fisica3 , lista_quimica , lista_quimica2 = ([] for i in range(9))
+
+
+    if hora == 9:
+        if curso in 
+        return
+    elif hora == 10:
+        return 
+    elif hora == 11:
+        return
+    elif hora == 12:
+        return
+    elif hora == 13:
+        return
+    elif hora == 14:
+        return
+    elif hora == 15:
+        return
+    elif hora == 16:
+        return
+    elif hora == 17:
+        return
+
+
+
+
+
 
 #Cada comando se añade como una funció:
 def start(update, context):
     user = update.message.from_user
     bienvenida = f"¡Bienvenido al Bot del estudiadero de Ingeniería, {user['first_name']}! 🤖 \
             \nEntiendo los siguientes comandos: \n/info te brinda más información sobre el estudiadero \
-            \n/ayuda te ofrece opciones de ayuda en tus materias \n/contacto te pone en contacto con soporte técnico \
+            \n/ayuda te ofrece ayuda en tus materias \n/contacto te pone en contacto con soporte técnico \
             \n/horario te muestra el horario de atención\n/case te pasa el contacto del CASE de Ingeniería(nolista)"
     context.bot.send_message(chat_id=update.effective_chat.id, text=bienvenida)    
     usuarios[str(user['first_name']) + str(user['last_name'])] = user['id'] #Si una persona entra y 
@@ -57,7 +129,7 @@ def info(update, context):
 
 def menu(update, context):
     context.bot.send_message(chat_id = update.effective_chat.id, text= "Entiendo los siguientes comandos:\n/info te brinda más información sobre el estudiadero\
-        \n/ayuda te ofrece opciones de ayuda en tus materias \n/contacto te pone en contacto con soporte técnico\
+        \n/ayuda te ofrece ayuda en tus materias \n/contacto te pone en contacto con soporte técnico\
         \n/horario te muestra el horario de atención\n/case te pasa el contacto del CASE de Ingeniería (nolista)") 
 
 def contacto(update, context):
@@ -94,8 +166,8 @@ def ayuda(update, context):
 def calculo1(update, context):
     global contador_mate
 
-    if contador_mate > len(lista_calculo1)-1:
-        contador_mate = 0
+    #if contador_mate > len(lista_calculo1)-1:
+    #    contador_mate = 0
 
     user = update.message.from_user
     hora1 = hora(1)
@@ -119,33 +191,18 @@ def turnos(firstname, lastname, contador, dict_asignacion):
 def calculo2(update, context):
     global contador_mate
 
-    if contador_mate > len(lista_calculo1)-1:
-        contador_mate = 0
-
     user = update.message.from_user
     hora1 = hora(1)
     contador_mate = turnos(str(user['first_name']), str(user['last_name']), contador_mate, asignacion_calculo1)
 
-    if hora1 > 0 and hora1 < 24:
-        context.bot.send_contact(chat_id=update.effective_chat.id, contact=lista_calculo2[asignacion_calculo1[str(user['first_name']) + str(user['last_name'])]])
-        #telegram.Message(contact=roberto)
-    else:
-        context.bot.send_message(chat_id=update.effective_chat.id, text = "No hay")
+#    if hora1 > 0 and hora1 < 24:
+#        context.bot.send_contact(chat_id=update.effective_chat.id, contact=lista_calculo2[asignacion_calculo1[str(user['first_name']) + str(user['last_name'])]])
+#        #telegram.Message(contact=roberto)
+#    else:
+#        context.bot.send_message(chat_id=update.effective_chat.id, text = "No hay")
 
 
-def selector(lista_curso, firstname, lastname):
-    hora = hora(1)
 
-    if hora >= 9 and hora < 11:
-        return lista_curso[asignacion_calculo1[firstname+lastname]]
-    
-    elif hora >= 11 and hora < 1:
-        return 
-
-    elif hora >= 1 and hora < 3:
-        return
-    elif hora >= 3:
-        return
 
 
 
