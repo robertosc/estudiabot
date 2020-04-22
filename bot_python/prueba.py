@@ -1,15 +1,20 @@
-dict = {'Rafael':["precalc", "calc1", "fisica1"], 'Domenico':['precalc', 'calc1, quimica']}
+contador_calc1 = 0
+dicts = {"RobertoSanchez":{"quimica": 0, "calc1":1}}
 
-nombres = []#['Rafael', 'Domenico']
 
-#print(dict(nombres[i] for i in nombres))
-for i in dict:
-    if "precalc" in dict[i]:
-        nombres.append(i)
+def turnos(firstname, lastname, contador, dict_asignacion, curso):
+    if firstname+lastname not in dict_asignacion:
+        dict_asignacion[firstname+lastname] = {curso: contador}
+    else:
+        if curso not in dict_asignacion[firstname+lastname]:
+            dict_asignacion[firstname+lastname][curso] = contador
+            print(dict_asignacion[firstname+lastname])
+    contador+=1
+    return dict_asignacion[firstname+lastname][curso]
 
-cursos_maulin = {"Maulin": [[12,13,14,15,16],'precacl', 'calc1', 'calc3', 'fisica1', 'fisica3', 'ecua']}
-cursos_david = {"David": [[13,14,15,16,17],'precacl', 'calc1','calc2','calc3', 'fisica1', 'fisica2', 'fisica3', 'ecua', 'algebra']}
+turnos("Roberto", "Sanche", contador_calc1, dicts, "quimicaa")
 
-lista= [cursos_david, cursos_maulin]
-print(lista[1]['Maulin'])
+#print(dicts["RobertoSanchez"])
+x = turnos("Roberto", "Sanche", contador_calc1, dicts, "quimic")
+print(x)
 

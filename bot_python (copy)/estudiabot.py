@@ -18,6 +18,12 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 #globales
 usuarios = {}
 
+asignacion_calculo1 = {}
+asignacion_calculo2 = {}
+asignacion_calculo3 = {}
+asignacion_fisica = {}
+
+
 contador_mate = 0
 contador_fisica = 0 
 contador_quimica = 0
@@ -67,13 +73,44 @@ cursos_david = [[13,14,15,16,17], david, 'precacl', 'calc1','calc2','calc3', 'fi
 lista_cursos_persona = [cursos_david, cursos_dome, cursos_jean, cursos_josel, cursos_josue, cursos_lau, cursos_mariela, cursos_mateo,
     cursos_maulin, cursos_rafa, cursos_ricardo, cursos_robert]
 
-#def horario(curso, hora): #Se le pasa un str con el curso
-#    lista_precal, lista_calculo, lista_calculo2, lista_calculo3, lista_fisica, lista_fisica2 , lista_fisica3 , lista_quimica , lista_quimica2 = ([] for i in range(9))
-#
-#    for persona in lista_cursos_persona:
-#        #print(curso in persona[0])
-#        if hora in persona[0] and curso in persona:
-#            print(persona[1])
+def horario(curso, hora): #Se le pasa un str con el curso
+    lista_precal, lista_calculo, lista_calculo2, lista_calculo3, lista_fisica, lista_fisica2 , lista_fisica3 , lista_quimica , lista_quimica2 = ([] for i in range(9))
+
+    for persona in lista_cursos_persona:
+        #print(curso in persona[0])
+        if hora in persona[0] and curso in persona:
+            print(persona)
+
+
+def selector(curso, firstname, lastname):
+    
+    hora = hora(1)
+
+    lista_precal,lista_calculo, lista_calculo2, lista_calculo3, lista_fisica, lista_fisica2 , lista_fisica3 , lista_quimica , lista_quimica2 = ([] for i in range(9))
+
+
+    if hora == 9:
+        if curso in 
+        return
+    elif hora == 10:
+        return 
+    elif hora == 11:
+        return
+    elif hora == 12:
+        return
+    elif hora == 13:
+        return
+    elif hora == 14:
+        return
+    elif hora == 15:
+        return
+    elif hora == 16:
+        return
+    elif hora == 17:
+        return
+
+
+
 
 
 
@@ -111,7 +148,7 @@ def case(update, context):
 
 def contador(update, context):
     context.bot.send_message(chat_id = update.effective_chat.id, text= f"{usuarios}")
-    #context.bot.send_message(chat_id = update.effective_chat.id, text= f"{asignacion_calculo1}")
+    context.bot.send_message(chat_id = update.effective_chat.id, text= f"{asignacion_calculo1}")
 
 def hora(opcion): #Opcion 1 devuelve hora como int, 2 devuelve hora completa con str
     now = datetime.now()
@@ -127,39 +164,46 @@ def horario(update, context):
 
 def ayuda(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="¿Con qué curso necesitas ayuda?\n\
-/precalculo\n/calculo1\n/calculo2\n/calculo3\n/algebra lineal\n/ecuaciones diferenciales\n/fisica1\n\
-/fisica2\n/fisica3\n/quimica1")
-
-def turnos(firstname, lastname, contador, dict_asignacion, curso, lista_asistentes):
-    if contador >= len(lista_asistentes)-1:
-        contador = 0 ####REVISAR SI PUEDE ESTAR AFUERA
-
-    if firstname+lastname not in dict_asignacion:
-        dict_asignacion[firstname+lastname] = {curso: contador}
-    else:
-        if curso not in dict_asignacion[firstname+lastname]:
-            dict_asignacion[firstname+lastname][curso] = contador
-            print(dict_asignacion[firstname+lastname])
-    
-    contador+=1
-    return dict_asignacion[firstname+lastname][curso]
-
-def horario_asist(curso, hora): #Se le pasa un str con el curso
-    #lista_precal, lista_calculo, lista_calculo2, lista_calculo3, lista_fisica, lista_fisica2 , lista_fisica3 , lista_quimica , lista_quimica2 = ([] for i in range(9))
-    lista_asistentes = []
-    for persona in lista_cursos_persona:
-        if hora in persona[0] and curso in persona:
-            lista_asistentes.append(persona[1])
-    return lista_asistentes
+/calculo1\n/calculo2\n/calculo3\n/algebra lineal\n/ecuaciones diferenciales\n/fisica1\n\
+/fisica2\n/fisica3\n/quimica1\n/quimica2")
 
 def calculo1(update, context):
-    user = update.message.from_user
-    now = hora(1)
+    global contador_mate
 
-    lista_asist = horario_asist('calc1', now)
-    
-    
-    return
+    #if contador_mate > len(lista_calculo1)-1:
+    #    contador_mate = 0
+
+    user = update.message.from_user
+    hora1 = hora(1)
+    contador_mate = turnos(str(user['first_name']), str(user['last_name']), contador_mate, asignacion_calculo1)
+
+    if hora1 > 0 and hora1 < 24:
+        context.bot.send_contact(chat_id=update.effective_chat.id, contact=lista_calculo1[asignacion_calculo1[str(user['first_name']) + str(user['last_name'])]])
+        #telegram.Message(contact=roberto)
+    else:
+        context.bot.send_message(chat_id=update.effective_chat.id, text = "No hay")
+
+def turnos(firstname, lastname, contador, dict_asignacion):
+    if firstname+lastname not in dict_asignacion:
+        dict_asignacion[firstname+lastname] = contador
+        contador+=1
+        return contador
+
+
+#ARREGLAR CALCULO2
+
+def calculo2(update, context):
+    global contador_mate
+
+    user = update.message.from_user
+    hora1 = hora(1)
+    contador_mate = turnos(str(user['first_name']), str(user['last_name']), contador_mate, asignacion_calculo1)
+
+#    if hora1 > 0 and hora1 < 24:
+#        context.bot.send_contact(chat_id=update.effective_chat.id, contact=lista_calculo2[asignacion_calculo1[str(user['first_name']) + str(user['last_name'])]])
+#        #telegram.Message(contact=roberto)
+#    else:
+#        context.bot.send_message(chat_id=update.effective_chat.id, text = "No hay")
 
 
 
@@ -176,8 +220,8 @@ info_handler = CommandHandler('info', info)
 menu_handler = CommandHandler('menu', menu)
 contador_handler = CommandHandler('contador', contador)
 ayuda_handler = CommandHandler('ayuda', ayuda)
-#calc1_handler = CommandHandler('calculo1', calculo1)
-#calc2_handler = CommandHandler('calculo2', calculo2)
+calc1_handler = CommandHandler('calculo1', calculo1)
+calc2_handler = CommandHandler('calculo2', calculo2)
 #calc3_handler = CommandHandler('calculo3', calculo3)
 
 
@@ -186,14 +230,15 @@ ayuda_handler = CommandHandler('ayuda', ayuda)
 contacto_handler = CommandHandler('contacto', contacto)
 case_handler = CommandHandler('case', case)
 
+
 dispatcher.add_handler(time_handler)
 dispatcher.add_handler(start_handler)
 dispatcher.add_handler(info_handler)
 dispatcher.add_handler(menu_handler)
 dispatcher.add_handler(contador_handler)
 dispatcher.add_handler(ayuda_handler)
-#dispatcher.add_handler(calc1_handler)
-#dispatcher.add_handler(calc2_handler)
+dispatcher.add_handler(calc1_handler)
+dispatcher.add_handler(calc2_handler)
 #dispatcher.add_handler(calc3_handler)
 dispatcher.add_handler(contacto_handler)
 dispatcher.add_handler(case_handler)
