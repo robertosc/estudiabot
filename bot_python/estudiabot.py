@@ -60,7 +60,7 @@ maulin = telegram.Contact(+50688108840, "Maulin")
 cursos_maulin = [[12,13,14,15], maulin, 'precacl', 'calc1', 'calc3', 'fisica1', 'fisica3', 'ecua']
 
 david = telegram.Contact(+50689419343, "David")
-cursos_david = [[13,14,15,16,17], david, 'precacl', 'calc1','calc2','calc3', 'fisica1', 'fisica2', 'fisica3', 'ecua', 'algebra']
+cursos_david = [[13,14,15,16,17], david, 'precacl', 'calc1', 'fisica1', 'fisica2', 'fisica3', 'ecua', 'algebra']
 
 
 #nombres = ["Roberto", "Josue", "Ricardo", "David", "Maulin", "Jean", "Laura", "Domenico", "JoseL", "Mateo", "Rafa"]
@@ -108,13 +108,13 @@ def contador(update, context):
 def hora(opcion): #Opcion 1 devuelve hora como int, 2 devuelve hora completa con str
     now = datetime.now()
     if opcion==1:
-        return int(now.strftime("%H"))
+        return 9#int(now.strftime("%H"))
     else:
         return now.strftime("%H:%M")
 
 def horario(update, context):
     current_time = hora(2)
-    context.bot.send_message(chat_id=update.effective_chat.id, text=f"El estudiadero está disponible de 9:00 a 18:00. \
+    context.bot.send_message(chat_id=update.effective_chat.id, text=f"El estudiadero está disponible los viernes de 9:00 a 18:00. \
     \nSon las {current_time}")
 
 def ayuda(update, context):
@@ -127,6 +127,9 @@ turnos_d = {}
 
 def turnos(firstname, lastname, contador, dict_asignacion, curso, hora):
     lista_asistentes = horario_asist(curso, hora)
+    if lista_asistentes == 0:
+        return 0, contador
+
     if contador >= len(lista_asistentes)-1:
         contador = 0 ####REVISAR SI PUEDE ESTAR AFUERA
 
@@ -137,6 +140,7 @@ def turnos(firstname, lastname, contador, dict_asignacion, curso, hora):
             dict_asignacion[firstname+lastname][curso] = contador
             print(dict_asignacion[firstname+lastname])
     contador+=1
+    #print(lista_asistentes[dict_asignacion[firstname+lastname][curso]])
     return lista_asistentes[dict_asignacion[firstname+lastname][curso]], contador
 
 def horario_asist(curso, hora): #Se le pasa un str con el curso
@@ -145,27 +149,28 @@ def horario_asist(curso, hora): #Se le pasa un str con el curso
     for persona in lista_cursos_persona:
         if hora in persona[0] and curso in persona:
             lista_asistentes.append(persona[1])
+    print(lista_asistentes)
+    if len(lista_asistentes) == 0:
+        return 0
     return lista_asistentes
 
 def sos(update, context):
-    #user = update.message.from_user
-    #telegram.KeyboardButton(text = "Enviar número telefónicp", request_poll=True)
     contact_keyboard = telegram.KeyboardButton(text="Enviar número telefónico para contacto", request_contact=True)
-    cancel_keyboard = telegram.KeyboardButton(text="Calcelar")
-    custom_keyboard = [[contact_keyboard, cancel_keyboard]]
-    
+    custom_keyboard = [[contact_keyboard]]
 
     reply_markup = telegram.ReplyKeyboardMarkup(custom_keyboard, resize_keyboard=True)
     context.bot.send_message(
         chat_id=update.effective_message.chat_id,
-        text="Would you mind sharing your location with me?",
-        reply_markup=reply_markup) 
-    print(get_contact())
-    
-    
-def get_contact(bot, update):
-    phone_number = update.message.contact.phone_number
-    return phone_number
+        text="¿Podrías enviarnos tu número de teléfono para ponernos en contacto contigo?",
+        reply_markup=reply_markup)
+
+
+def get_contact(update, context):
+    contact = update.message.contact
+    context.bot.send_message(chat_id=update.effective_chat.id, text="Serás contactado en breve. :)")
+    context.bot.send_message(chat_id=-389144116, text=f"{contact['first_name']} necesita ayuda.")
+    context.bot.send_contact(chat_id=-389144116, contact = contact)
+
     #context.bot.send_message(chat_id=-389144116, text=f"https://web.telegram.org/#/im?p=u{user['id']}")
 
 def calculo1(update, context):
@@ -173,9 +178,15 @@ def calculo1(update, context):
     user = update.message.from_user
     now = hora(1)
     contacto_a, contador_calc1 = turnos(str(user['first_name']), str(user['last_name']), contador_calc1, turnos_d, 'calc1', now)
-    context.bot.send_message(chat_id=update.effective_chat.id, text = f"Parece que necesitas ayuda en cálculo 1,\
-    puedes contactar a {str(contacto_a)} para que te ayude. Si no te contesta en 10min, selecciona /sos y alguien te contactará")
-    context.bot.send_contact(chat_id=update.effective_chat.id, contact = contacto_a)
+    print(type(contacto_a))
+    context.bot.send_contact(chat_id=update.effective_chat.id, contact = contacto_a) ##ERROR
+
+    if contacto_a == 0:
+        context.bot.send_message(chat_id=update.effective_chat.id, text = "No hay asesor disponible")
+    else:
+        context.bot.send_message(chat_id=update.effective_chat.id, text = f"Parece que necesitas ayuda en cálculo 1,\
+    puedes contactar a {str(contacto_a['first_name'])} para que te ayude. Si no te contesta en 10min, selecciona /sos y alguien te contactará")
+        #context.bot.send_contact(chat_id=update.effective_chat.id, contact = contacto_a)
 
 def calculo2(update, context):
     global contador_mates
@@ -183,46 +194,61 @@ def calculo2(update, context):
     user = update.message.from_user
     now = hora(1)
     contacto_a, contador_calc1 = turnos(str(user['first_name']), str(user['last_name']), contador_mates, turnos_d, 'calc2', now)
-    context.bot.send_message(chat_id=update.effective_chat.id, text = f"Parece que necesitas ayuda en cálculo 2,\
-    puedes contactar a {str(contacto_a['first_name'])} para que te ayude. Si no te contesta en 10min, selecciona /sos y\
-    alguien te contactará")
-    context.bot.send_contact(chat_id=update.effective_chat.id, contact = contacto_a)
+    if contacto_a == 0:
+        context.bot.send_message(chat_id=update.effective_chat.id, text = "No hay asesor disponible")
+    else:
+        context.bot.send_message(chat_id=update.effective_chat.id, text = f"Parece que necesitas ayuda en cálculo 2,\
+        puedes contactar a {str(contacto_a['first_name'])} para que te ayude. Si no te contesta en 10min, selecciona /sos y\
+        alguien te contactará")
+        context.bot.send_contact(chat_id=update.effective_chat.id, contact = contacto_a)
     
 def calculo3(update, context):
     global contador_calc1
     user = update.message.from_user
     now = hora(1)
     contacto_a, contador_calc1 = turnos(str(user['first_name']), str(user['last_name']), contador_mates, turnos_d, 'calc3', now)
-    context.bot.send_message(chat_id=update.effective_chat.id, text = f"Parece que necesitas ayuda en cálculo 3,\
-    puedes contactar a {str(contacto_a)} para que te ayude. Si no te contesta en 10min, selecciona /sos y alguien te contactará")
-    context.bot.send_contact(chat_id=update.effective_chat.id, contact = contacto_a)
+    if contacto_a == 0:
+        context.bot.send_message(chat_id=update.effective_chat.id, text = "No hay asesor disponible")
+    else:
+        context.bot.send_message(chat_id=update.effective_chat.id, text = f"Parece que necesitas ayuda en cálculo 3,\
+        puedes contactar a {str(contacto_a['first_name'])} para que te ayude. Si no te contesta en 10min, selecciona /sos y alguien te contactará")
+        context.bot.send_contact(chat_id=update.effective_chat.id, contact = contacto_a)
 
 def fisica1(update, context):
     global contador_fisica1
     user = update.message.from_user
     now = hora(1)
     contacto_a, contador_calc1 = turnos(str(user['first_name']), str(user['last_name']), contador_fisica1, turnos_d, 'fisica1', now)
-    context.bot.send_message(chat_id=update.effective_chat.id, text = f"Parece que necesitas ayuda en física 1,\
-    puedes contactar a {str(contacto_a)} para que te ayude. Si no te contesta en 10min, selecciona /sos y alguien te contactará")
-    context.bot.send_contact(chat_id=update.effective_chat.id, contact = contacto_a)
+    if contacto_a == 0:
+        context.bot.send_message(chat_id=update.effective_chat.id, text = "No hay asesor disponible")
+    else:
+        context.bot.send_message(chat_id=update.effective_chat.id, text = f"Parece que necesitas ayuda en física 1,\
+        puedes contactar a {str(contacto_a['first_name'])} para que te ayude. Si no te contesta en 10min, selecciona /sos y alguien te contactará")
+        context.bot.send_contact(chat_id=update.effective_chat.id, contact = contacto_a)
 
 def fisica2(update, context):
     global contador_fisicas
     user = update.message.from_user
     now = hora(1)
     contacto_a, contador_calc1 = turnos(str(user['first_name']), str(user['last_name']), contador_fisicas, turnos_d, 'fisica2', now)
-    context.bot.send_message(chat_id=update.effective_chat.id, text = f"Parece que necesitas ayuda en física 2,\
-    puedes contactar a {str(contacto_a)} para que te ayude. Si no te contesta en 10min, selecciona /sos y alguien te contactará")
-    context.bot.send_contact(chat_id=update.effective_chat.id, contact = contacto_a)
+    if contacto_a == 0:
+        context.bot.send_message(chat_id=update.effective_chat.id, text = "No hay asesor disponible")
+    else:
+        context.bot.send_message(chat_id=update.effective_chat.id, text = f"Parece que necesitas ayuda en física 2,\
+        puedes contactar a {str(contacto_a['first_name'])} para que te ayude. Si no te contesta en 10min, selecciona /sos y alguien te contactará")
+        context.bot.send_contact(chat_id=update.effective_chat.id, contact = contacto_a)
 
 def fisica3(update, context):
     global contador_fisicas
     user = update.message.from_user
     now = hora(1)
     contacto_a, contador_calc1 = turnos(str(user['first_name']), str(user['last_name']), contador_fisicas, turnos_d, 'fisica3', now)
-    context.bot.send_message(chat_id=update.effective_chat.id, text = f"Parece que necesitas ayuda en física 3,\
-    puedes contactar a {str(contacto_a)} para que te ayude. Si no te contesta en 10min, selecciona /sos y alguien te contactará")
-    context.bot.send_contact(chat_id=update.effective_chat.id, contact = contacto_a)
+    if contacto_a == 0:
+        context.bot.send_message(chat_id=update.effective_chat.id, text = "No hay asesor disponible")
+    else:
+        context.bot.send_message(chat_id=update.effective_chat.id, text = f"Parece que necesitas ayuda en física 3,\
+        puedes contactar a {str(contacto_a['first_name'])} para que te ayude. Si no te contesta en 10min, selecciona /sos y alguien te contactará")
+        context.bot.send_contact(chat_id=update.effective_chat.id, contact = contacto_a)
 
 
 
@@ -240,7 +266,6 @@ calc3_handler = CommandHandler('calculo3', calculo3)
 fisica1_handler = CommandHandler('fisica1', fisica1)
 fisica2handler = CommandHandler('fisica2', fisica2)
 fisica3handler = CommandHandler('fisica3', fisica3)
-
 sos_handler = CommandHandler('sos', sos)
 
 
