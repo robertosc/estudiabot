@@ -89,26 +89,6 @@ def selector(curso, firstname, lastname):
     lista_precal,lista_calculo, lista_calculo2, lista_calculo3, lista_fisica, lista_fisica2 , lista_fisica3 , lista_quimica , lista_quimica2 = ([] for i in range(9))
 
 
-    if hora == 9:
-        if curso in 
-        return
-    elif hora == 10:
-        return 
-    elif hora == 11:
-        return
-    elif hora == 12:
-        return
-    elif hora == 13:
-        return
-    elif hora == 14:
-        return
-    elif hora == 15:
-        return
-    elif hora == 16:
-        return
-    elif hora == 17:
-        return
-
 
 
 
