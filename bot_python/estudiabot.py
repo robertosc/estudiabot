@@ -1,7 +1,7 @@
 import telegram, logging
 
 from telegram.ext import Updater
-from telegram.ext import CommandHandler
+from telegram.ext import CommandHandler, CallbackQueryHandler, ConversationHandler
 from telegram.ext import MessageHandler, Filters
 
 from datetime import datetime
@@ -28,13 +28,13 @@ contador_quimica = 0
 case1 = telegram.Contact(+50625110000, "CASE Ingeniería")
 
 #roberto = telegram.Contact(+50684069486, "@RobertoSanchezC")
-cursos_robert = [[11,12,13,14,15,16,17], "@RobertoSanchezC" , 'precalc', 'calc1', 'calc3', 'fisica1', 'fisica3', 'ecua']
+cursos_robert = [[11,12,13,14], "@RobertoSanchezC" , 'precalc', 'calc1', 'calc3', 'fisica1', 'fisica3', 'ecua']
 
 #josue = telegram.Contact(+50689703121, "Josue")
 cursos_josue = [[9,10,11,12], "@josue", 'precacl', 'calc1','calc2','calc3', 'fisica1', 'fisica2', 'fisica3', 'ecua', 'algebra']##
 
-#ricardo = telegram.Contact(+50687726153, "Ricardo")
-cursos_ricardo = [[17], "@ricardo", 'precacl', 'calc1','calc2','calc3', 'fisica1', 'fisica2', 'fisica3', 'ecua', 'algebra']##
+#ricardo = telegram.Contact(+50687726153, "Ricardo") ##FALTA HORARIO
+cursos_ricardo = [[11,12,13,15], "@ricardo", 'precacl', 'calc1','calc2','calc3', 'fisica1', 'fisica2', 'fisica3', 'ecua', 'algebra']##
 
 #laura = telegram.Contact(+50689559126, "Laura")
 cursos_lau = [[11,12,13,14], "@laura", 'precacl', 'calc1','fisica1', 'fisica2', 'ecua']
@@ -69,6 +69,8 @@ cursos_david = [[13,14,15,16,17], "@david", 'precacl', 'calc1', 'fisica1', 'fisi
 lista_cursos_persona = [cursos_ricardo ,cursos_robert, cursos_david, cursos_dome, cursos_jean, cursos_josel, cursos_josue, cursos_lau, cursos_mariela, cursos_mateo,
     cursos_maulin, cursos_rafa]
 
+FIRST = range(1)
+CALCULO1, CALCULO2, CALCULO3 = range(3)
 
 #Cada comando se añade como una funció:
 def start(update, context):
@@ -98,8 +100,8 @@ al desarrollador: @RobertoSanchezC")
     #context.bot.send_contact(chat_id=update.effective_chat.id, contact = roberto)
 
 def case(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text=f"El número del case es {case['phone_number']}, puedes llamar de 7am-4pm")
-
+    context.bot.send_message(chat_id=update.effective_chat.id, text=f"Te adjunto el contacto del case, puedes llamar de 7am-4pm")
+    context.bot.send_contact(chat_id=update.effective_chat.id, contact = case1)
 
 def contador(update, context):
     context.bot.send_message(chat_id = update.effective_chat.id, text= f"{usuarios}")
@@ -122,6 +124,20 @@ def ayuda(update, context):
 /precalculo\n/calculo1\n/calculo2\n/calculo3\n/algebra lineal\n/ecuaciones diferenciales\n/fisica1\n\
 /fisica2\n/fisica3\n/quimica1")
 
+#def ayuda(update, context):
+#    keyboard = [[telegram.InlineKeyboardButton("Cálculo 1", callback_data='calculo1'),
+#                telegram.InlineKeyboardButton("Cálculo 2", callback_data='calculo2')],
+#                [telegram.InlineKeyboardButton("Calculo 3", callback_data='calculo3')]]
+#
+#    reply_markup = telegram.InlineKeyboardMarkup(keyboard)
+#
+#    update.message.reply_text('Please choose:', reply_markup=reply_markup)
+#    return FIRST
+#
+#def button(update, context):
+#    query = update.callback_query
+#    query.answer()
+#    query.edit_message_text(text="Selected option: {}".format(query.data))
 
 turnos_d = {}
 
@@ -197,8 +213,8 @@ def calculo2(update, context):
 
     user = update.message.from_user
     now = hora(1)
-    contacto_info, contador_calc1 = turnos(str(user['first_name']), str(user['last_name']), contador_mates, turnos_d, 'calc2', now)
-    if contacto_a == 0:
+    contacto_info, contador_mates = turnos(str(user['first_name']), str(user['last_name']), contador_mates, turnos_d, 'calc2', now)
+    if contacto_info == 0:
         context.bot.send_message(chat_id=update.effective_chat.id, text = "No hay asesor disponible")
     else:
         context.bot.send_message(chat_id=update.effective_chat.id, text = f"Parece que necesitas ayuda en cálculo 2,\
@@ -210,7 +226,7 @@ def calculo3(update, context):
     global contador_calc1
     user = update.message.from_user
     now = hora(1)
-    contacto_info, contador_calc1 = turnos(str(user['first_name']), str(user['last_name']), contador_mates, turnos_d, 'calc3', now)
+    contacto_info, contador_mates = turnos(str(user['first_name']), str(user['last_name']), contador_mates, turnos_d, 'calc3', now)
     if contacto_info == 0:
         context.bot.send_message(chat_id=update.effective_chat.id, text = "No hay asesor disponible")
     else:
@@ -222,7 +238,7 @@ def fisica1(update, context):
     global contador_fisica1
     user = update.message.from_user
     now = hora(1)
-    contacto_info, contador_calc1 = turnos(str(user['first_name']), str(user['last_name']), contador_fisica1, turnos_d, 'fisica1', now)
+    contacto_info, contador_fisica1 = turnos(str(user['first_name']), str(user['last_name']), contador_fisica1, turnos_d, 'fisica1', now)
     if contacto_info == 0:
         context.bot.send_message(chat_id=update.effective_chat.id, text = "No hay asesor disponible")
     else:
@@ -234,7 +250,7 @@ def fisica2(update, context):
     global contador_fisicas
     user = update.message.from_user
     now = hora(1)
-    contacto_info, contador_calc1 = turnos(str(user['first_name']), str(user['last_name']), contador_fisicas, turnos_d, 'fisica2', now)
+    contacto_info, contador_fisicas = turnos(str(user['first_name']), str(user['last_name']), contador_fisicas, turnos_d, 'fisica2', now)
     if contacto_info == 0:
         context.bot.send_message(chat_id=update.effective_chat.id, text = "No hay asesor disponible")
     else:
@@ -246,7 +262,7 @@ def fisica3(update, context):
     global contador_fisicas
     user = update.message.from_user
     now = hora(1)
-    contacto_info, contador_calc1 = turnos(str(user['first_name']), str(user['last_name']), contador_fisicas, turnos_d, 'fisica3', now)
+    contacto_info, contador_fisicas = turnos(str(user['first_name']), str(user['last_name']), contador_fisicas, turnos_d, 'fisica3', now)
     if contacto_info == 0:
         context.bot.send_message(chat_id=update.effective_chat.id, text = "No hay asesor disponible")
     else:
@@ -254,7 +270,16 @@ def fisica3(update, context):
         puedes contactar a {contacto_info} para que te ayude. Si no te contesta en 10min, selecciona /sos y alguien te contactará")
         #context.bot.send_contact(chat_id=update.effective_chat.id, contact = contacto_a)
 
-
+def quimica(update, context):
+    global contador_quimica
+    user = update.message.from_user
+    now = hora(1)
+    contacto_info, contador_quimica =  turnos(str(user['first_name']), str(user['last_name']), contador_fisicas, turnos_d, 'quimica', now)
+    if contacto_info == 0:
+        context.bot.send_message(chat_id=update.effective_chat.id, text = "No hay asesor disponible")
+    else:
+        context.bot.send_message(chat_id=update.effective_chat.id, text = f"Parece que necesitas ayuda en física 3,\
+        puedes contactar a {contacto_info} para que te ayude. Si no te contesta en 10min, selecciona /sos y alguien te contactará")
 
 
 
@@ -268,11 +293,22 @@ calc1_handler = CommandHandler('calculo1', calculo1)
 calc2_handler = CommandHandler('calculo2', calculo2)
 calc3_handler = CommandHandler('calculo3', calculo3)
 fisica1_handler = CommandHandler('fisica1', fisica1)
-fisica2handler = CommandHandler('fisica2', fisica2)
-fisica3handler = CommandHandler('fisica3', fisica3)
+fisica2_handler = CommandHandler('fisica2', fisica2)
+fisica3_handler = CommandHandler('fisica3', fisica3)
 sos_handler = CommandHandler('sos', sos)
 
 
+#conv_handler = ConversationHandler(
+#        entry_points=[CommandHandler('start', start)],
+#        states={
+#            FIRST: [CallbackQueryHandler(calculo1, pattern='^' + str(CALCULO1) + '$'),
+#                    CallbackQueryHandler(calculo2, pattern='^' + str(CALCULO2) + '$'),
+#                    CallbackQueryHandler(calculo3, pattern='^' + str(CALCULO3) + '$')]
+#        },
+#        fallbacks=[CommandHandler('start', start)]
+#    )
+
+#dispatcher.add_handler(conv_handler)
 
 contacto_handler = CommandHandler('contacto', contacto)
 case_handler = CommandHandler('case', case)
@@ -288,8 +324,14 @@ dispatcher.add_handler(calc2_handler)
 dispatcher.add_handler(calc3_handler)
 dispatcher.add_handler(contacto_handler)
 dispatcher.add_handler(case_handler)
-#dispatcher.add_handler(sos_handler)
-#dispatcher.add_handler(MessageHandler(Filters.contact, get_contact))
+dispatcher.add_handler(fisica1_handler)
+dispatcher.add_handler(fisica2_handler)
+dispatcher.add_handler(fisica3_handler)
+
+
+#updater.dispatcher.add_handler(CallbackQueryHandler(button))
+dispatcher.add_handler(sos_handler)
+dispatcher.add_handler(MessageHandler(Filters.contact, get_contact))
 updater.start_polling()
 
 #sleep(25)
